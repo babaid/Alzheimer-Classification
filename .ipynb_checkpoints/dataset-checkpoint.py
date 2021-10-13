@@ -5,8 +5,6 @@ import numpy as np
 import os
 from PIL import Image
 
-
-
 class AlzheimerDataset(Dataset):
     """Alzheimers classification dataset."""
     def __init__(self, root_dir,transform=transforms.ToTensor()):
