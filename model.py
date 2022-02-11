@@ -27,27 +27,29 @@ class AlzheimerClassifierNet(nn.Module):
         return self.model(x)
     
     
+"""
+A Convolutional made out of Adaptive layers, for lazy testing
+"""
 class AdaptiveAlzheimerClassifierNet(nn.Module):
     def __init__(self):
         super(AdaptiveAlzheimerClassifierNet, self).__init__()
         
         
         self.model = nn.Sequential(nn.Conv2d(1, 32, kernel_size=5, stride=1, padding=4, bias=None), nn.ELU(), nn.BatchNorm2d(32),#208x176
-                                   nn.AdaptiveMaxPool2d((150, 150)),#103x87
+                                   nn.AdaptiveMaxPool2d((150, 150)),
                                    nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1, bias=None), nn.ELU(),nn.BatchNorm2d(64),
-                                   nn.AdaptiveMaxPool2d((100, 100)),#51x43
+                                   nn.AdaptiveMaxPool2d((100, 100)),
                                    nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1, bias=None), nn.ELU(), nn.BatchNorm2d(128),
-                                   nn.AdaptiveMaxPool2d((50, 50)), #25x21
+                                   nn.AdaptiveMaxPool2d((50, 50)), 
                                    nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1, bias=None), nn.ELU(), nn.BatchNorm2d(256),
-                                   nn.AdaptiveMaxPool2d((25, 25)), #12x10
+                                   nn.AdaptiveMaxPool2d((25, 25)), 
                                    nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1, bias=None), nn.ELU(), nn.BatchNorm2d(512),
-                                   nn.AdaptiveMaxPool2d((15, 15)), #6x5
+                                   nn.AdaptiveMaxPool2d((15, 15)),
                                    nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1, bias=None), nn.ELU(), nn.BatchNorm2d(512),
                                    nn.AdaptiveMaxPool2d((10, 10)),
                                    nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1, bias=None), nn.ELU(), nn.BatchNorm2d(512),
                                    nn.AdaptiveMaxPool2d((5, 5)),
-                                   #nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1, bias=None), nn.ELU(), nn.BatchNorm2d(512),
-                                   #nn.AdaptiveMaxPool2d((2, 2)),
+                                
                                    nn.Flatten(),
                                    nn.Dropout(0.2),
                                    nn.Linear(512*5*5, 2000), nn.ELU(), nn.Dropout(0.1), nn.Linear(2000, 4)
@@ -102,7 +104,10 @@ class AdaptiveResidualClassifier(nn.Module):
         
     def forward(self, x):
         return self.model(x)
-        
+
+"""
+Tests a model, given a dataloader.
+"""  
 def test_model(dataloader, model):
     model.eval()
     img, label = next(iter(dataloader))["image"], next(iter(dataloader))["label"]
