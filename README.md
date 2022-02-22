@@ -8,3 +8,5 @@ I've decided to use RMSprop as optimizer instead of other alternatives, it prove
 As far as accuracy goes percentage of around 75 percent can be achieved on weaker models, the accuracy of a resnet-50 is around 85 percent. Higher accuracy could be achieved if the dataset would be larger.
 I also have to say that using only MRI pictures isnt necessary the best way to approach the problem. Other imaging methods like fMRI or MEG show viable alternatives with better resolutions.
 
+## Project dependencies
+The libraries in this project used are pytorch 2.8.1+cuda to perform the actual classification task, PIL for image processing and numpy for handling the dataset.
