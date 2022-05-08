@@ -89,7 +89,8 @@ def train_autoencoder(model, dataloaders, criterion, optimizer, scheduler, devic
                 else:
                     cntr += 1
             if cntr > early_stop:
-                break
+                model.load_state_dict(best_model)
+                return model
     time_elapsed = time.time()-since
     
     print(f'Training complete in {time_elapsed//60:.0f}m {time_elapsed % 60:.0f}s')
@@ -179,7 +180,8 @@ def train_classifier(model, dataloaders, criterion, optimizer, scheduler, device
                 else:
                     cntr += 1
             if cntr>early_stop:
-                break
+                model.load_state_dict(best_model)
+                return model
                 
     time_elapsed = time.time()-since
     print(f'Training complete in {time_elapsed//60:.0f}m {time_elapsed % 60:.0f}s')

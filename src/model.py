@@ -10,18 +10,21 @@ class Autoencoder(nn.Module):
     """
     def __init__(self):
         super(Autoencoder, self).__init__()
-        self.encoder = nn.Sequential(nn.Conv2d(3, 8, kernel_size=3, padding=1, stride=1, bias=None),nn.ReLU(), nn.AdaptiveMaxPool2d((200, 200)), nn.BatchNorm2d(8),
-                                        nn.Conv2d(8, 16, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((128, 128)), nn.BatchNorm2d(16),
-                                        nn.Conv2d(16, 32, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((64, 64)), nn.BatchNorm2d(32),
-                                        nn.Conv2d(32, 64, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((32, 32)), nn.BatchNorm2d(64),
-                                        nn.Conv2d(64, 128, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((16, 16)), nn.BatchNorm2d(128),
-                                        nn.Conv2d(128, 256, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((8, 8)), nn.BatchNorm2d(256)
+        self.encoder = nn.Sequential(nn.Conv2d(3, 8, kernel_size=3, padding=1, stride=1, bias=None),nn.ReLU(), nn.AdaptiveMaxPool2d((128, 128)), nn.BatchNorm2d(8),
+                                        nn.Conv2d(8, 16, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((64, 64)), nn.BatchNorm2d(16),
+                                        nn.Conv2d(16, 32, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((32, 32)), nn.BatchNorm2d(32),
+                                        nn.Conv2d(32, 64, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((16, 16)), nn.BatchNorm2d(64),
+                                        nn.Conv2d(64, 128, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((8, 8)), nn.BatchNorm2d(128),
+                                        nn.Conv2d(128, 256, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((4, 4)), nn.BatchNorm2d(256),
+                                    
                                          )
-        self.decoder = nn.Sequential(nn.ConvTranspose2d(256,128, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(128),#16
-                                     nn.ConvTranspose2d(128,64, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(64),#32
-                                     nn.ConvTranspose2d(64,32, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(32),#64
-                                     nn.ConvTranspose2d(32,16, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(16),#128   
-                                     nn.ConvTranspose2d(16,3, kernel_size=2, stride=2, padding=0, bias=None), nn.Sigmoid())
+        self.decoder = nn.Sequential(
+                                     nn.ConvTranspose2d(256,128, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(128),#8
+                                     nn.ConvTranspose2d(128,64, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(64),#16
+                                     nn.ConvTranspose2d(64,32, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(32),#32
+                                     nn.ConvTranspose2d(32,16, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(16),#64
+                                     nn.ConvTranspose2d(16,8, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(8),#128
+                                     nn.ConvTranspose2d(8,3, kernel_size=2, stride=2, padding=0, bias=None), nn.Sigmoid())#256
         
         
 
@@ -38,25 +41,75 @@ class AlzheimerClassifier(nn.Module):
         super(AlzheimerClassifier, self).__init__()
         
         self.hparams = hparams
-        self.encoder = nn.Sequential(nn.Conv2d(3, 8, kernel_size=3, padding=1, stride=1, bias=None),nn.ReLU(), nn.AdaptiveMaxPool2d((200, 200)), nn.BatchNorm2d(8),
-                                        nn.Conv2d(8, 16, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((128, 128)), nn.BatchNorm2d(16),
-                                        nn.Conv2d(16, 32, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((64, 64)), nn.BatchNorm2d(32),
-                                        nn.Conv2d(32, 64, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((32, 32)), nn.BatchNorm2d(64),
-                                        nn.Conv2d(64, 128, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((16, 16)), nn.BatchNorm2d(128),
-                                        nn.Conv2d(128, 256, kernel_size=3, padding=1, stride=1, bias=None), nn.ReLU(), nn.AdaptiveMaxPool2d((8, 8)), nn.BatchNorm2d(256)
-                                         )
+        self.encoder = nn.Sequential(nn.Conv2d(3, 64, kernel_size=5, padding=2, stride=1), nn.ELU(), 
+                                   nn.AdaptiveMaxPool2d((128, 128)),
+                                   ResidualBlock(64), nn.ELU(),nn.BatchNorm2d(64),
+                                   ResidualBlock(64), nn.ELU(),nn.BatchNorm2d(64),
+                                   ResidualBlock(64), nn.ELU(),nn.BatchNorm2d(64),
+                                   nn.AdaptiveMaxPool2d((64, 64)),#51x43
+                                   nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1), nn.ELU(), nn.BatchNorm2d(128),
+                                   nn.AdaptiveMaxPool2d((32, 32)),
+                                   ResidualBlock(128), nn.ELU(),nn.BatchNorm2d(128),
+                                   ResidualBlock(128), nn.ELU(),nn.BatchNorm2d(128),
+                                   ResidualBlock(128), nn.ELU(),nn.BatchNorm2d(128),
+                                   nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1), nn.ELU(),nn.BatchNorm2d(256),
+                                   nn.AdaptiveMaxPool2d((16, 16)),
+                                   ResidualBlock(256), nn.ELU(),nn.BatchNorm2d(256),
+                                   ResidualBlock(256), nn.ELU(),nn.BatchNorm2d(256),
+                                   ResidualBlock(256), nn.ELU(),nn.BatchNorm2d(256),
+                                   nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1), nn.ELU(),nn.BatchNorm2d(512),
+                                   nn.AdaptiveMaxPool2d((8, 8)),
+                                   ResidualBlock(512), nn.ELU(),nn.BatchNorm2d(512),
+                                   ResidualBlock(512), nn.ELU(),nn.BatchNorm2d(512),
+                                   ResidualBlock(512), nn.ELU(),nn.BatchNorm2d(512),
+                                  )
 
        
         
-        self.classifier=nn.Sequential(nn.Flatten(), nn.Dropout(0.1),nn.Linear(256*8*8, 5000), nn.ReLU(), nn.Dropout(0.1), nn.Linear(5000, 5), nn.Softmax())
+        self.classifier=nn.Sequential(nn.Flatten(), nn.Dropout(0.1),nn.Linear(512*8*8, 512), nn.ReLU(), nn.Dropout(0.1), nn.Linear(512, self.hparams["classes"]), nn.Softmax(dim=1))
         
     def forward(self, x):
-
         with torch.no_grad():
             x = self.encoder(x)
-            
         return self.classifier(x)
     
+    
+class ResAE(nn.Module):
+    #Somekind of resnet, almost 50
+    def __init__(self):
+        super(ResAE, self).__init__()
+        self.encoder = nn.Sequential(nn.Conv2d(3, 64, kernel_size=5, padding=2, stride=1), nn.ELU(), 
+                                   nn.AdaptiveMaxPool2d((128, 128)),
+                                   ResidualBlock(64), nn.ELU(),nn.BatchNorm2d(64),
+                                   ResidualBlock(64), nn.ELU(),nn.BatchNorm2d(64),
+                                   ResidualBlock(64), nn.ELU(),nn.BatchNorm2d(64),
+                                   nn.AdaptiveMaxPool2d((64, 64)),#51x43
+                                   nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1), nn.ELU(), nn.BatchNorm2d(128),
+                                   nn.AdaptiveMaxPool2d((32, 32)),
+                                   ResidualBlock(128), nn.ELU(),nn.BatchNorm2d(128),
+                                   ResidualBlock(128), nn.ELU(),nn.BatchNorm2d(128),
+                                   ResidualBlock(128), nn.ELU(),nn.BatchNorm2d(128),
+                                   nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1), nn.ELU(),nn.BatchNorm2d(256),
+                                   nn.AdaptiveMaxPool2d((16, 16)),
+                                   ResidualBlock(256), nn.ELU(),nn.BatchNorm2d(256),
+                                   ResidualBlock(256), nn.ELU(),nn.BatchNorm2d(256),
+                                   ResidualBlock(256), nn.ELU(),nn.BatchNorm2d(256),
+                                   nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1), nn.ELU(),nn.BatchNorm2d(512),
+                                   nn.AdaptiveMaxPool2d((8, 8)),
+                                   ResidualBlock(512), nn.ELU(),nn.BatchNorm2d(512),
+                                   ResidualBlock(512), nn.ELU(),nn.BatchNorm2d(512),
+                                   ResidualBlock(512), nn.ELU(),nn.BatchNorm2d(512),
+                                  )
+        self.decoder = nn.Sequential(
+                                     nn.ConvTranspose2d(512,128, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(128),#16
+                                     nn.ConvTranspose2d(128,64, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(64),#32
+                                     nn.ConvTranspose2d(64,32, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(32),#64
+                                     nn.ConvTranspose2d(32,8, kernel_size=2, stride=2, padding=0, bias=None), nn.ELU(), nn.BatchNorm2d(8),#128
+                                     nn.ConvTranspose2d(8,3, kernel_size=2, stride=2, padding=0, bias=None), nn.BatchNorm2d(3), nn.Sigmoid())#256
+
+    def forward(self, x):
+        return self.decoder(self.encoder(x))
+
     
 """
 A Convolutional made out of Adaptive layers, for lazy testing
@@ -101,7 +154,17 @@ class ResidualBlock(nn.Module):
     def forward(self, x):
         return self.model(x)+self.skip(x)
     
+class ResDeconvB(nn.Module):
+    def __init__(self, channels, kernel_size=2, padding=0, stride=2):
+        super(ResidualBlock, self).__init__()
+        self.skip = nn.Identity()
+        self.model = nn.Sequential( nn.ConvTranspose2d(channels,channels, kernel_size=kernel_size, stride=stride, padding=padding, bias=None), nn.ELU(), nn.BatchNorm2d(channels),
+                                   nn.BatchNorm2d(channels),
+                                   nn.ELU(), nn.ConvTranspose2d(channels, channels, kernel_size=kernel_size, padding=padding, stride=stride))
+    def forward(self, x):
+        return self.model(x)+self.skip(x)
     
+   
 class AdaptiveResidualClassifier(nn.Module):
     #Somekind of resnet, almost 50
     def __init__(self):
